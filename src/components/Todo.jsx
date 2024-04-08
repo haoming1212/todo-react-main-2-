@@ -1,7 +1,10 @@
 import {useEffect, useRef, useState} from "react";
-import {Button, Modal} from "antd";
+import {Button, Checkbox, Modal, Space} from "antd";
 import CameraCapture from "./CameraCapture.jsx";
 import ImageShow from "./ImageShow.jsx";
+import MapContainer from "./MapCard";
+import ImageCard from "./ImageCard.jsx";
+import RandomCard from "./RandomCard";
 
 function usePrevious(value) {
   const ref = useRef(null);
@@ -96,13 +99,29 @@ function Todo(props) {
     setIsShowModalOpen(false);
   };
 
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+
+  const showMapModal = () => {
+    setIsMapModalOpen(true);
+  };
+
+  const handleMapOk = () => {
+    setIsMapModalOpen(false);
+  };
+
+  const handleMapCancel = () => {
+    setIsMapModalOpen(false);
+  };
+
   const viewTemplate = (
     <div className="stack-small">
       <div className="c-cb">
+        {/*<Checkbox checked={props.completed}*/}
+        {/*          onChange={() => props.toggleTaskCompleted(props.id, !props.completed)}></Checkbox>*/}
         <input
           id={props.id}
           type="checkbox"
-          defaultChecked={props.completed}
+          checked={props.completed}
           onChange={() => props.toggleTaskCompleted(props.id, !props.completed)}
         />
         <label className="todo-label" htmlFor={props.id}>
@@ -113,42 +132,65 @@ function Todo(props) {
         </label>
       </div>
       <div className="btn-group">
-        <button
-          type="button"
-          className="btn"
-          onClick={() => {
-            setEditing(true);
-          }}
-          ref={editButtonRef}>
-          Edit <span className="visually-hidden">{props.name}</span>
-        </button>
+        <Space wrap>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => {
+              setEditing(true);
+            }}
+            ref={editButtonRef}>
+            Edit <span className="visually-hidden">{props.name}</span>
+          </button>
 
-        <button
-          type="button"
-          className="btn"
-          onClick={showShowModal}>
-          看照片
-        </button>
-        <Modal title="看照片" open={isShowModalOpen} onOk={handleShowOk} onCancel={handleShowCancel}>
-          <ImageShow imageUrl={props.imageUrl}></ImageShow>
-        </Modal>
+          <button
+            type="button"
+            className="btn"
+            onClick={showShowModal}>
+            View Photo
+          </button>
+          <Modal title="View Photo" open={isShowModalOpen} onOk={handleShowOk} onCancel={handleShowCancel}>
+            <ImageShow imageUrl={props.imageUrl}></ImageShow>
+          </Modal>
 
-        <button
-          type="button"
-          className="btn"
-          onClick={showCaptureModal}>
-          拍照
-        </button>
-        <Modal title="拍照" open={isCaptureModalOpen} onOk={handleCaptureOk} onCancel={handleCaptureCancel}>
-          <CameraCapture image={props.image} setImage={props.setImage}></CameraCapture>
-        </Modal>
+          <button
+            type="button"
+            className="btn"
+            onClick={showCaptureModal}>
+            Take Photo
+          </button>
+          <Modal title="Take Photo" open={isCaptureModalOpen} onOk={handleCaptureOk} onCancel={handleCaptureCancel}>
+            <CameraCapture image={props.image} setImage={props.setImage}></CameraCapture>
+          </Modal>
 
-        <button
-          type="button"
-          className="btn btn__danger"
-          onClick={() => props.deleteTask(props.id)}>
-          Delete <span className="visually-hidden">{props.name}</span>
-        </button>
+
+          <button
+            type="button"
+            className="btn"
+            onClick={showMapModal}>
+            Map
+          </button>
+          <Modal width={1100} title="Map" open={isMapModalOpen} onOk={handleMapOk} onCancel={handleMapCancel}>
+            {isMapModalOpen &&
+              <MapContainer
+                id={props.id}
+                latitude={props.latitude}
+                longitude={props.longitude}
+              ></MapContainer>
+            }
+          </Modal>
+
+          <ImageCard></ImageCard>
+
+          <RandomCard></RandomCard>
+
+          <button
+            type="button"
+            className="btn btn__danger"
+            onClick={() => props.deleteTask(props.id)}>
+            Delete <span className="visually-hidden">{props.name}</span>
+          </button>
+        </Space>
       </div>
     </div>
   );

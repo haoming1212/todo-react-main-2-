@@ -17,15 +17,15 @@ function CameraCapture(props) {
       <Webcam
         ref={webcamRef}
         style={{width: '100%', height: '400px'}}
-        audio={false} // 是否启用麦克风，默认为false
+        audio={false}
         screenshotFormat="image/jpeg"
       />
 
-      <Button type={"primary"} onClick={capture}>拍照</Button>
+      <Button type={"primary"} onClick={capture}>Take Photo</Button>
 
       {image && (
         <div>
-          <Divider>图片展示</Divider>
+          <Divider>Show</Divider>
           <img src={image} alt="Captured Image" style={{maxWidth: '100%'}}/>
         </div>
       )}

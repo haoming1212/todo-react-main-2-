@@ -3,7 +3,11 @@ import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
 import {addTask, deleteTask, listTask, updateTask} from "./services/TaskApi.js";
-import CameraCapture from "./components/CameraCapture.jsx";
+import Demo from "./components/MapCard";
+import MapContainer from "./components/MapCard";
+import {Button} from "antd";
+import ImageCard from "./components/ImageCard.jsx";
+import RandomCard from "./components/RandomCard";
 
 function usePrevious(value) {
   const ref = useRef(null);
@@ -13,12 +17,11 @@ function usePrevious(value) {
   return ref.current;
 }
 
-// 过滤的map
+
 const FILTER_MAP = {
   All: () => true, Active: (task) => !task.completed, Completed: (task) => task.completed,
 };
 
-// 过滤的name列表
 const FILTER_NAMES = Object.keys(FILTER_MAP);
 
 
@@ -26,12 +29,10 @@ function App(props) {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All");
 
-  // 运行一次
   useEffect(() => {
     loadData();
   }, []);
 
-  // 数据加载函数
   const loadData = async () => {
     const res = await listTask({});
     setTasks(res.data.data);
@@ -39,13 +40,11 @@ function App(props) {
 
 
   const toggleTaskCompleted = async (id, completed) => {
-    console.log("修改状态", id, completed);
     const values = {
       _id: id,
       completed: completed
     }
     const res = await updateTask(values);
-    console.log(res);
 
     await loadData();
   }
@@ -65,7 +64,6 @@ function App(props) {
       name: newName,
       image: image
     }
-    console.log("修改", values);
 
     const res = await updateTask(values);
     await loadData();
@@ -73,7 +71,6 @@ function App(props) {
 
   const [image, setImage] = useState(null);
 
-  // 过滤
   const taskList = tasks
     ?.filter(FILTER_MAP[filter])
     .map((task) => {
@@ -84,7 +81,7 @@ function App(props) {
           completed={task.completed}
           latitude={task.latitude}
           longitude={task.longitude}
-          key={task.id}
+          key={task._id}
           image={image}
           setImage={setImage}
           imageUrl={task.image}
@@ -109,14 +106,11 @@ function App(props) {
   navigator.geolocation.getCurrentPosition((position) => {
     setLongitude(position.coords.longitude);
     setLatitude(position.coords.latitude);
-    // console.log(position.coords.latitude, position.coords.longitude);
   });
 
   const onAddTask = async (name) => {
-    // 获取地理位置信息
     // const res = {latitude, longitude};
     const newTask = {name: name, completed: false, latitude: latitude, longitude: longitude};
-    // console.log(newTask);
     const res = await addTask(newTask);
     await loadData();
   }
@@ -135,6 +129,7 @@ function App(props) {
 
   return (<div className="todoapp stack-large">
       <h1>TodoMatic</h1>
+
       <Form addTask={onAddTask}/>
 
       <div className="filters btn-group stack-exception">{filterList}</div>
